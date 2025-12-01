@@ -62,6 +62,7 @@ const webhookWorker = new Worker('webhookQueue', async (job) => {
   console.log('[Worker] Processing webhook job', job.id);
   const { tenantId, topic, payload } = job.data;
   try {
+    // Store the event
     await prisma.event.create({
       data: {
         tenantId: tenantId || 1,
@@ -69,6 +70,24 @@ const webhookWorker = new Worker('webhookQueue', async (job) => {
         payload: JSON.stringify(payload || {})
       }
     });
+
+    // Trigger immediate sync based on webhook topic
+    const { syncAllTenants, syncOrdersForTenant, syncCustomersForTenant, syncProductsForTenant } = require('../services/syncService');
+    
+    if (topic && topic.includes('order')) {
+      console.log('[Webhook] Order webhook detected - syncing orders');
+      const tenant = await prisma.tenant.findUnique({ where: { id: tenantId || 1 } });
+      if (tenant) await syncOrdersForTenant(tenant);
+    } else if (topic && topic.includes('customer')) {
+      console.log('[Webhook] Customer webhook detected - syncing customers');
+      const tenant = await prisma.tenant.findUnique({ where: { id: tenantId || 1 } });
+      if (tenant) await syncCustomersForTenant(tenant);
+    } else if (topic && topic.includes('product')) {
+      console.log('[Webhook] Product webhook detected - syncing products');
+      const tenant = await prisma.tenant.findUnique({ where: { id: tenantId || 1 } });
+      if (tenant) await syncProductsForTenant(tenant);
+    }
+
     return { success: true };
   } catch (err) {
     console.error('[Worker] Webhook job error:', err.message);

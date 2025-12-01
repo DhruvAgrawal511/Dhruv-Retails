@@ -146,5 +146,8 @@ async function syncAllTenants() {
 }
 
 module.exports = {
-  syncAllTenants
+  syncAllTenants,
+  syncProductsForTenant,
+  syncCustomersForTenant,
+  syncOrdersForTenant
 };
