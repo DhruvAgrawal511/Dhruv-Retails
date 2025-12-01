@@ -54,8 +54,8 @@ app.listen(PORT, () => {
 });
 
 
-cron.schedule('*/15 * * * *', async () => {
-  console.log('Running scheduled Shopify sync...');
+cron.schedule('*/5 * * * *', async () => {
+  console.log('Running scheduled Shopify sync (every 5 minutes)...');
   try {
     await syncAllTenants();
     console.log('Scheduled sync completed');

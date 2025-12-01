@@ -18,6 +18,30 @@ export default function Dashboard() {
   const [repeatStats, setRepeatStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [syncing, setSyncing] = useState(false);
+  const [syncMessage, setSyncMessage] = useState("");
+
+  async function triggerSync() {
+    setSyncing(true);
+    setSyncMessage("Syncing data from Shopify...");
+    try {
+      const response = await API.get('/jobs/sync');
+      setSyncMessage("Sync completed! Refreshing data...");
+      setTimeout(() => {
+        loadData();
+        setSyncMessage("");
+      }, 1000);
+    } catch (err) {
+      setSyncMessage("Sync failed. Refreshing with existing data...");
+      console.error('Sync error:', err);
+      setTimeout(() => {
+        loadData();
+        setSyncMessage("");
+      }, 1500);
+    } finally {
+      setSyncing(false);
+    }
+  }
 
   async function loadData() {
     setLoading(true);
@@ -54,10 +78,24 @@ export default function Dashboard() {
       <div className="dashboard-container">
         <div className="dashboard-header">
           <h2>Dashboard</h2>
-          <button className="refresh-btn" onClick={loadData} disabled={loading}>
-            🔄 Refresh
-          </button>
+          <div className="header-actions">
+            <button 
+              className="sync-btn" 
+              onClick={triggerSync} 
+              disabled={syncing || loading}
+              title="Sync data from Shopify"
+            >
+              ⬇️ Sync from Shopify
+            </button>
+            <button className="refresh-btn" onClick={loadData} disabled={loading || syncing}>
+              🔄 Refresh
+            </button>
+          </div>
         </div>
+
+        {syncMessage && (
+          <Toast message={syncMessage} type={syncMessage.includes('✅') ? 'success' : 'info'} />
+        )}
 
         {loading && <LoadingSpinner />}
         {error && <Toast message={error} type="error" />}
