@@ -1,0 +1,112 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+model Tenant {
+  id                  Int       @id @default(autoincrement())
+  name                String
+  shopifyStoreDomain  String    @unique
+  shopifyAccessToken  String
+  createdAt           DateTime  @default(now())
+
+  users      User[]
+  products   Product[]
+  customers  Customer[]
+  orders     Order[]
+  orderItems OrderItem[]  
+  events     Event[]  
+}
+
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String   // hashed password
+  createdAt DateTime @default(now())
+
+  tenant   Tenant   @relation(fields: [tenantId], references: [id])
+  tenantId Int
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  tenantId    Int
+  shopifyId   String   @unique
+  title       String
+  description String?
+  price       Decimal? @db.Decimal(10, 2)
+  currency    String?  // e.g. "INR"
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  orderItems OrderItem[]
+}
+
+
+model Customer {
+  id          Int      @id @default(autoincrement())
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  tenantId    Int
+  shopifyId   String   @unique
+  firstName   String?
+  lastName    String?
+  email       String?
+  phone       String?
+  city        String?
+  tags        String?  // comma separated tags from Shopify
+  createdAt   DateTime @default(now())
+
+  orders      Order[]
+  events      Event[]
+}
+
+model Order {
+  id                 Int        @id @default(autoincrement())
+  tenant             Tenant     @relation(fields: [tenantId], references: [id])
+  tenantId           Int
+  shopifyId          String     @unique
+  orderNumber        String?
+  customer           Customer?  @relation(fields: [customerId], references: [id])
+  customerId         Int?
+  totalPrice         Decimal?   @db.Decimal(10, 2) 
+  currency           String?    // "INR"
+  shopifyCreatedAt   DateTime?
+  analyticsDate      DateTime?
+  financialStatus    String?
+  fulfillmentStatus  String?
+  createdAt          DateTime   @default(now())
+
+  orderItems         OrderItem[]
+}
+
+
+model OrderItem {
+  id            Int      @id @default(autoincrement())
+  tenant        Tenant   @relation(fields: [tenantId], references: [id])
+  tenantId      Int
+  order         Order    @relation(fields: [orderId], references: [id])
+  orderId       Int
+  product       Product? @relation(fields: [productId], references: [id])
+  productId     Int?
+  shopifyLineId String?
+  quantity      Int
+  price         Decimal? @db.Decimal(10, 2) 
+}
+
+model Event {
+  id         Int      @id @default(autoincrement())
+  tenant     Tenant   @relation(fields: [tenantId], references: [id])
+  tenantId   Int
+  type       String   // e.g. "cart_abandoned", "checkout_started"
+  customer   Customer? @relation(fields: [customerId], references: [id])
+  customerId Int?
+  payload    String?  // raw JSON as string
+  createdAt  DateTime @default(now())
+}

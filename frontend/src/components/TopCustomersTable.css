@@ -1,0 +1,74 @@
+.table-wrapper {
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+.customers-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+.customers-table thead {
+  background: #f5f5f5;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.customers-table th {
+  padding: 14px 16px;
+  text-align: left;
+  font-weight: 600;
+  color: #333;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.customers-table tbody tr {
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.2s ease;
+}
+
+.customers-table tbody tr:hover {
+  background: #fafafa;
+}
+
+.customers-table td {
+  padding: 14px 16px;
+  color: #555;
+  font-size: 14px;
+}
+
+.name-cell {
+  font-weight: 600;
+  color: #333;
+}
+
+.email-cell {
+  color: #667eea;
+  word-break: break-word;
+}
+
+.spend-cell {
+  font-weight: 600;
+  color: #4caf50;
+}
+
+.order-cell {
+  text-align: center;
+  font-weight: 600;
+  color: #2196f3;
+}
+
+@media (max-width: 768px) {
+  .customers-table th,
+  .customers-table td {
+    padding: 10px 12px;
+    font-size: 12px;
+  }
+
+  .customers-table th {
+    font-size: 11px;
+  }
+}
