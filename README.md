@@ -106,13 +106,13 @@ npm run dev
 
 ### 5. Access the App
 
-- **Frontend**: http://localhost:5174
-- **Backend API**: http://localhost:4000
+- **Frontend**: https://dhruv-retails-site.onrender.com
+- **Backend API**: https://dhruv-retails.onrender.com/
 
 ## Usage
 
 ### Register & Login
-1. Navigate to http://localhost:5174/register
+1. Navigate to https://dhruv-retails-site.onrender.com/register
 2. Create an account with email and password
 3. Login with your credentials
 4. View the analytics dashboard
@@ -196,7 +196,7 @@ Workers automatically process jobs and log progress to console.
 
 1. Update `frontend/src/api/api.js`:
    ```javascript
-   baseURL: "https://your-backend.onrender.com"
+   baseURL: "https://dhruv-retails.onrender.com/"
    ```
 
 2. Create a new **Static Site** on Render
@@ -223,17 +223,17 @@ Workers automatically process jobs and log progress to console.
 ### API Testing (curl or Postman)
 ```bash
 # Register
-curl -X POST http://localhost:4000/auth/register \
+curl -X POST https://dhruv-retails-site.onrender.com/auth/register \
   -H "Content-Type: application/json" \
   -d '{"email":"test@example.com","password":"password123"}'
 
 # Login
-curl -X POST http://localhost:4000/auth/login \
+curl -X POST https://dhruv-retails-site.onrender.com/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"test@example.com","password":"password123"}'
 
 # Get analytics
-curl -X GET "http://localhost:4000/analytics/summary?tenantId=1" \
+curl -X GET "https://dhruv-retails-site.onrender.com/analytics/summary?tenantId=1" \
   -H "Authorization: Bearer YOUR_JWT_TOKEN"
 ```
 
